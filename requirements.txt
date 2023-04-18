@@ -1,0 +1,5 @@
+baseball_scraper
+requests_toolbelt
+NaijaBet-Api
+pybaseball
+python-sbr
