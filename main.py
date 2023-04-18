@@ -3,8 +3,6 @@ from pysbr import *
 from datetime import datetime, date, timedelta
 from espn import ProbableStartersScraper
 
-
-# TODO handle chicago, ny, la multiple teams per city
 def get_participant_ids(e):
     ret = {}
     for event in e.list():
@@ -22,7 +20,6 @@ def pitcher_score_hits(p_stats, name):
     print("Pitcher: " + name + " P: " + str(p_count) + " H: " + str(h_count))
     return (h_count / p_count) * 100
 
-
 def get_pitcher_score(pitcher_name):
     last = pitcher_name.split(" ")[1]
     first = pitcher_name.split(" ")[0]
@@ -31,12 +28,7 @@ def get_pitcher_score(pitcher_name):
 
     return pitcher_score_hits(p_stats, pitcher_name)
 
-
-
 def main():
-
-    # print(get_pitcher_score("Chris Flexen"))
-
     es = ProbableStartersScraper(date.today(), date.today())
     df = es.scrape()
 
@@ -45,8 +37,6 @@ def main():
     dt = datetime.strptime(str(date.today()), '%Y-%m-%d')
     e = EventsByDate(mlb.league_id, dt)
     cl = CurrentLines(e.ids(), mlb.market_ids(['moneyline']), sb.ids(['bovada']))
-    # print(cl.list())
-    # print(len(df.iterrows()))
 
     odds_col = []
     pitcher_score_col = []
@@ -57,6 +47,7 @@ def main():
     for i in df.iterrows():
         team = i[1]['team']
         odds = 0
+        # TODO handle chicago, ny, la multiple teams per city
         if team not in ['Los Angeles', 'Chicago', 'New York']:
             participant_id = p_ids.get(team)
             for odds_data in cl.list():
@@ -71,39 +62,6 @@ def main():
     df['p_score'] = pitcher_score_col
 
     print(df)
-    
-    # print(x)
-
-
-
-
-# ---
-
-
-
-
-# mlb = MLB()
-# sb = Sportsbook()
-# dt = datetime.strptime(str(date.today()), '%Y-%m-%d')
-# e = EventsByDate(mlb.league_id, dt)
-# cl = CurrentLines(e.ids(), mlb.market_ids(['pointspread']), sb.ids(['bovada']))
-
-# e.list()
-# cl.list()
-
-
-
-# data = statcast()
-
-# print(data)
-
-
-# def hr_calculate_winning_bet_probability(pitcher, batter):
-#     return
-
-# def is_profitable_bet(winning_bet_probability, bet_odds):
-#     return 
-
 
 if __name__ == "__main__":
     main()
