@@ -73,15 +73,20 @@ def main():
         teamName, oppName = dfRow[1]['team'], dfRow[1]['opponent']
         print(teamName, oppName)
         pitcher = team_pitchers[teamName]
-        opp_pitcher = team_pitchers[oppName]
-        print("Pitchers looking at: \n", pitcher, opp_pitcher)
+        try:
+            opp_pitcher = team_pitchers[oppName]
+            print("Pitchers looking at: \n", pitcher, opp_pitcher)
 
-        p_score_value = pitcher.get_pitcher_score_value(opp_pitcher.get_pitcher_score())
-        #p_score_value = get_pitcher_score_value(dfRow[1]['p_score'], pitcher_scores[dfRow[1]['opponent']])
-        pitcher_score_value_col.append(p_score_value)
-        do_i_bet = is_it_a_bet(p_score_value, dfRow[1]['odds'])
-        value_with_odds_col.append(value_with_odds(p_score_value, dfRow[1]['odds']))
-        is_bet.append(do_i_bet)
+            p_score_value = pitcher.get_pitcher_score_value(opp_pitcher.get_pitcher_score())
+            #p_score_value = get_pitcher_score_value(dfRow[1]['p_score'], pitcher_scores[dfRow[1]['opponent']])
+            pitcher_score_value_col.append(p_score_value)
+            do_i_bet = is_it_a_bet(p_score_value, dfRow[1]['odds'])
+            value_with_odds_col.append(value_with_odds(p_score_value, dfRow[1]['odds']))
+            is_bet.append(do_i_bet)
+        except:
+            pitcher_score_value_col.append("BUG")
+            value_with_odds_col.append("BUG")
+            is_bet.append("BUG")
 
     df['pitcher_score_value'] = pitcher_score_value_col
     df['is_bet'] = is_bet
