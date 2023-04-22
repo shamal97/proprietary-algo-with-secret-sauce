@@ -1,7 +1,7 @@
 from pybaseball import playerid_lookup, statcast_pitcher
 from pysbr import *
 from datetime import datetime, date, timedelta
-from espn import ProbableStartersScraper
+from espn import ProbableStartersScraper, ProbableLineupScraper
 from pitcher import Pitcher
 
 
@@ -19,6 +19,10 @@ def is_it_a_bet(p_score_value, odds):
 
 def value_with_odds(p_score_value, odds):
     return p_score_value * odds
+
+def test_batters():
+    print(ProbableLineupScraper(date.today()))
+    return None
 
 def main():
     es = ProbableStartersScraper(date.today() + timedelta(1), date.today() + timedelta(1))
@@ -63,8 +67,11 @@ def main():
     df['odds'] = odds_col
     df['p_score'] = pitcher_score_col
 
+    print(df)
+
     for dfRow in df.iterrows():
         teamName, oppName = dfRow[1]['team'], dfRow[1]['opponent']
+        print(teamName, oppName)
         pitcher = team_pitchers[teamName]
         opp_pitcher = team_pitchers[oppName]
         print("Pitchers looking at: \n", pitcher, opp_pitcher)
@@ -81,6 +88,7 @@ def main():
     df['value_w_odds'] = value_with_odds_col
 
     print(df)
+    test_batters()
 
 if __name__ == "__main__":
     main()

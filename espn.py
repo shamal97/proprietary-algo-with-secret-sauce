@@ -3,6 +3,30 @@ from datetime import timedelta
 import pandas as pd
 from bs4 import BeautifulSoup
 
+class ProbableLineupScraper:
+    """Pulls probable lineup info from espn.com
+
+    It retuns the probably lineup for the current day; anything
+    in the future seems to not be filled out
+
+    lineups seem to be set an hour to 3 hours before the start of the game;
+    may be longer or shorter
+
+    :param state_date: Starting date range
+    :type start_date: datetime.date
+    :param end_date: Ending date range
+    :type end_date: datetime.date
+    """
+
+    def __init__(self, date):
+        self.start_date = date
+        self.url = self.set_url()
+        print(self.url)
+
+    def set_url(self):
+        dt_fmt = date.strftime("%Y%m%d")
+        return "https://www.mlb.com/starting-lineups/{}".format(dt_fmt)
+
 
 class ProbableStartersScraper:
     """Pulls probable starter info from espn.com
@@ -114,22 +138,46 @@ class ProbableStartersScraper:
                 # df = df.append(self._produce_df_row(day, p_anchors[1],
                                                     # away_anchors))
         return df
+    
+    def determine_city_team(self, t_anchor_text, city):
+        # find which team it is if there are multiple teams per city
+        if city == "Chicago":
+            if "-white-sox" in t_anchor_text:
+                return "Chicago White Sox"
+            elif "-cubs" in t_anchor_text:
+                return "Chicago Cubs"
+        if city == "New York":
+            if "-yankees" in t_anchor_text:
+                return "New York Yankees"
+            if "-mets" in t_anchor_text:
+                return "New York Mets"
+        if city == "Los Angeles":
+            if "-angels":
+                return "Los Angeles Angles"
+            elif "-dodgers":
+                return "Los Angeles Dodgers"
 
     def _produce_df_row(self, day, p_anchor, t_anchor, mt_anchor):
         opponent = t_anchor[1].text
         team = mt_anchor[1].text
-        # print(t_anchor[1].text)
-        # for a in t_anchor:
-        #     # print('scott')
-        #     # print(a)
-        #     for abbr in a.find_all('tr'):
-        #         opponent = abbr.text
+        print(t_anchor[1].text)
+        print(mt_anchor)
+        print(t_anchor)
+        for a in t_anchor:
+            print('scott')
+            print(a)
+            for abbr in a.find_all('tr'):
+                #opponent = abbr.text
+                print(abbr.text)
         player_name = p_anchor.text
         link = p_anchor['href']
         id_loc = link.find("/id/")
         if id_loc == -1:
+            print("ERROR NONONONONON")
             raise ValueError("Could not extract espn ID from link: " + link)
         espn_id = int(link[id_loc+4:])
+        print("here jake")
+        print(day, player_name, espn_id, team, opponent)
         return pd.DataFrame(data=[[day, player_name, espn_id, team, opponent]],
                             columns=["Date", "Name", "espn_id", "team", "opponent"])
 

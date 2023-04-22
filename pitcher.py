@@ -1,6 +1,8 @@
 from pybaseball import playerid_lookup, statcast_pitcher
 from datetime import datetime, date, timedelta
 
+STATS_START_DATE = '2023-03-30'
+
 class Pitcher:
     """Pulls probable starter info from espn.com
 
@@ -46,7 +48,7 @@ class Pitcher:
         
         p_lookup = p_lookup[0]
 
-        p_stats = statcast_pitcher('2023-03-30', str(date.today()), p_lookup)
+        p_stats = statcast_pitcher(STATS_START_DATE, str(date.today()), p_lookup)
 
         self.score = self.pitcher_score_hits(p_stats)
         return
